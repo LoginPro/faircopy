@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- FairCopy (англ. «чистовик»): тетрадь в клетку с полями, запятая — самая частая правка, искра — ИИ -->
+  <defs>
+    <linearGradient id="ink" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2D3FA8"/>
+      <stop offset="0.55" stop-color="#22267A"/>
+      <stop offset="1" stop-color="#160F4A"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.42" cy="0.38" r="0.6">
+      <stop offset="0" stop-color="#6F86FF" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#6F86FF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#E4E8FF"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFE58A"/>
+      <stop offset="1" stop-color="#FFB547"/>
+    </linearGradient>
+    <pattern id="grid" width="58" height="58" patternUnits="userSpaceOnUse" x="12" y="12">
+      <path d="M58 0H0V58" fill="none" stroke="#FFFFFF" stroke-opacity="0.09" stroke-width="3"/>
+    </pattern>
+    <clipPath id="squircle">
+      <rect x="100" y="100" width="824" height="824" rx="186"/>
+    </clipPath>
+    <filter id="lift" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="22" stdDeviation="26" flood-color="#08052A" flood-opacity="0.55"/>
+    </filter>
+    <filter id="spark" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="0" stdDeviation="14" flood-color="#FFC94D" flood-opacity="0.7"/>
+    </filter>
+  </defs>
+
+  <g clip-path="url(#squircle)">
+    <rect x="100" y="100" width="824" height="824" fill="url(#ink)"/>
+    <rect x="100" y="100" width="824" height="824" fill="url(#grid)"/>
+    <rect x="100" y="100" width="824" height="824" fill="url(#glow)"/>
+    <!-- поля тетради -->
+    <rect x="770" y="100" width="8" height="824" fill="#FF5C6C" opacity="0.8"/>
+  </g>
+  <rect x="100.5" y="100.5" width="823" height="823" rx="186" fill="none" stroke="#FFFFFF" stroke-opacity="0.12" stroke-width="3"/>
+
+  <!-- запятая -->
+  <path filter="url(#lift)" fill="url(#paper)"
+        d="M 352 430
+           A 140 140 0 1 1 632 430
+           C 632 585 560 690 418 752
+           C 402 759 390 740 403 729
+           C 470 672 503 620 508 569
+           A 140 140 0 0 1 352 430 Z"/>
+
+  <!-- искра ИИ -->
+  <g filter="url(#spark)" fill="url(#gold)">
+    <path d="M 700 214 C 709 276 720 287 782 296 C 720 305 709 316 700 378 C 691 316 680 305 618 296 C 680 287 691 276 700 214 Z"/>
+    <path d="M 640 430 C 644 455 649 460 674 464 C 649 468 644 473 640 498 C 636 473 631 468 606 464 C 631 460 636 455 640 430 Z" opacity="0.9" transform="translate(64 -24)"/>
+  </g>
+</svg>
