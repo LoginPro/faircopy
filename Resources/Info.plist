@@ -2,20 +2,37 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleName</key><string>FairCopy</string>
-	<key>CFBundleDisplayName</key><string>FairCopy</string>
-	<key>CFBundleIconFile</key><string>AppIcon</string>
-	<key>CFBundleIdentifier</key><string>local.aieditor</string>
-	<key>CFBundleDevelopmentRegion</key><string>ru</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>ru</string>
+	<key>CFBundleDisplayName</key>
+	<string>FairCopy</string>
+	<key>CFBundleExecutable</key>
+	<string>AIEditor</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+	<key>CFBundleIdentifier</key>
+	<string>local.aieditor</string>
 	<key>CFBundleLocalizations</key>
-	<array><string>ru</string><string>en</string></array>
-	<key>CFBundleExecutable</key><string>AIEditor</string>
-	<key>CFBundlePackageType</key><string>APPL</string>
-	<key>CFBundleShortVersionString</key><string>1.0</string>
-	<key>CFBundleVersion</key><string>1</string>
-	<key>LSMinimumSystemVersion</key><string>26.0</string>
-	<key>LSUIElement</key><true/>
+	<array>
+		<string>ru</string>
+		<string>en</string>
+	</array>
+	<key>CFBundleName</key>
+	<string>FairCopy</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>26.0</string>
+	<key>LSUIElement</key>
+	<true/>
 	<key>NSAppTransportSecurity</key>
-	<dict><key>NSAllowsLocalNetworking</key><true/></dict>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

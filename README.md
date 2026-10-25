@@ -38,7 +38,17 @@
 - A model — the default is **Gemma 4 12B** (MLX, 4-bit QAT, ~9 GB). Anything OpenAI-compatible works; Qwen 3.5 9B is a lighter alternative.
 - Xcode Command Line Tools (full Xcode is not needed)
 
-## Install
+## Download
+
+[![Download FairCopy](https://img.shields.io/github/v/release/LoginPro/faircopy-mac?label=Download&style=for-the-badge&color=22267A)](https://github.com/LoginPro/faircopy-mac/releases/latest)
+
+Grab the **.dmg** from the [latest release](https://github.com/LoginPro/faircopy-mac/releases/latest), open it and drag FairCopy to Applications. FairCopy isn't notarized, so on first launch macOS blocks it once: open **System Settings → Privacy & Security** and click **Open Anyway**. Then follow steps 1–2 below and get a model:
+
+```bash
+~/.lmstudio/bin/lms get https://huggingface.co/mlx-community/gemma-4-12B-it-qat-OptiQ-4bit
+```
+
+## Build from source
 
 ```bash
 # 1. Get the model (LM Studio's CLI is installed with the app)
@@ -82,7 +92,8 @@ Shortcuts can be changed in Settings → General.
 - **Text in, text out.** FairCopy reads the selection through the Accessibility API (falling back to <kbd>⌘C</kbd>), sends it to LM Studio on `127.0.0.1`, and pastes the result with <kbd>⌘V</kbd>, restoring your clipboard afterwards.
 - **Prompts that keep your voice.** Few-shot examples teach the model to fix only mistakes and leave slang alone. Thinking mode is turned off for speed.
 - **My Voice** doesn't fine-tune anything. FairCopy measures formal habits in code (capitalization, periods, emoji, length), asks the model to describe your wording and tone, keeps only expressions that really recur in your messages, and turns a few of your messages into *neutral → your version* examples by back-translation.
-- Styles live in `~/Library/Application Support/FairCopy/styles.json`.
+- All prompts and the built-in styles live in [`shared/`](shared/) as JSON, not in the code, so a port to another OS uses exactly the same wording. `--dump-prompts` prints every assembled prompt to check that a port matches.
+- Your styles live in `~/Library/Application Support/FairCopy/styles.json`.
 
 ## Command line
 
@@ -96,6 +107,7 @@ APP="build/FairCopy.app/Contents/MacOS/AIEditor"
 "$APP" --translate English "привет, как дела?"
 "$APP" --voice ~/Downloads/ChatExport "Text to rewrite in my voice"
 "$APP" --warm | --cool | --model-state                          # model memory
+"$APP" --dump-prompts                                           # print all prompts as sent to the model
 AIEDITOR_URL=http://127.0.0.1:8080/v1 "$APP" "…"                # any OpenAI-compatible server
 ```
 
@@ -103,9 +115,11 @@ AIEDITOR_URL=http://127.0.0.1:8080/v1 "$APP" "…"                # any OpenAI-c
 
 ```
 Sources/      Swift sources (AppKit + SwiftUI, built with swiftc — no Xcode project)
+shared/       prompts and built-in styles as JSON — shared with future ports (see shared/README.md)
 Resources/    Info.plist, icons, en/ru localizations
-Branding/     logo and icon sources (SVG)
+Branding/     logo and icon sources (SVG), DMG background and layout
 build.sh      build, sign and install
+release.sh    build the installer DMG (needs `pip install dmgbuild`); `./release.sh publish` makes a GitHub release
 ```
 
 Code comments are in Russian — the project started as a personal tool.

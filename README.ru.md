@@ -34,7 +34,17 @@
 - Модель — по умолчанию **Gemma 4 12B** (MLX, 4-bit QAT, ~9 ГБ); полегче — Qwen 3.5 9B
 - Xcode Command Line Tools (полный Xcode не нужен)
 
-## Установка
+## Скачать
+
+[![Скачать FairCopy](https://img.shields.io/github/v/release/LoginPro/faircopy-mac?label=%D0%A1%D0%BA%D0%B0%D1%87%D0%B0%D1%82%D1%8C&style=for-the-badge&color=22267A)](https://github.com/LoginPro/faircopy-mac/releases/latest)
+
+Скачай **.dmg** из [последнего релиза](https://github.com/LoginPro/faircopy-mac/releases/latest), открой и перетащи FairCopy в «Программы». Приложение не нотариально заверено Apple, поэтому при первом запуске macOS его заблокирует: открой **Системные настройки → Конфиденциальность и безопасность** и нажми **«Всё равно открыть»**. Дальше — шаги 1–2 ниже и модель:
+
+```bash
+~/.lmstudio/bin/lms get https://huggingface.co/mlx-community/gemma-4-12B-it-qat-OptiQ-4bit
+```
+
+## Сборка из исходников
 
 ```bash
 ~/.lmstudio/bin/lms get https://huggingface.co/mlx-community/gemma-4-12B-it-qat-OptiQ-4bit
@@ -61,6 +71,8 @@ cd faircopy-mac
 | <kbd>esc</kbd> | Закрыть |
 
 Сочетания меняются в Настройки → Основное. Командная строка и устройство проекта описаны в [английском README](README.md#command-line).
+
+Все промпты и стандартные стили лежат в папке [`shared/`](shared/) в виде JSON, а не в коде: версия для другой ОС будет использовать ровно те же формулировки.
 
 ## Лицензия
 

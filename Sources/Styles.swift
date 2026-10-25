@@ -7,6 +7,16 @@ struct Style: Codable, Identifiable, Hashable {
         var id = UUID().uuidString
         var input: String
         var output: String
+
+        init(input: String, output: String) { self.input = input; self.output = output }
+
+        /// В shared/styles.json у примеров нет id — выдаём новый.
+        init(from decoder: Decoder) throws {
+            let c = try decoder.container(keyedBy: CodingKeys.self)
+            id = try c.decodeIfPresent(String.self, forKey: .id) ?? UUID().uuidString
+            input = try c.decode(String.self, forKey: .input)
+            output = try c.decode(String.self, forKey: .output)
+        }
     }
 
     var id: String
@@ -17,13 +27,27 @@ struct Style: Codable, Identifiable, Hashable {
     /// Пары «до → после» (few-shot). Необязательны, но заметно повышают точность.
     var examples: [Example] = []
 
+    init(id: String, emoji: String, name: String, prompt: String, examples: [Example] = []) {
+        self.id = id; self.emoji = emoji; self.name = name; self.prompt = prompt; self.examples = examples
+    }
+
+    /// В shared/styles.json длинная инструкция записана массивом строк, примеров может не быть.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        emoji = try c.decode(String.self, forKey: .emoji)
+        name = try c.decode(String.self, forKey: .name)
+        prompt = try c.decode(PromptText.self, forKey: .prompt).value
+        examples = try c.decodeIfPresent([Example].self, forKey: .examples) ?? []
+    }
+
     /// Разовый стиль из поля «Свой стиль» в окне редактора.
     static let customID = "custom"
     static func adHoc(_ description: String) -> Style {
         Style(id: customID, emoji: "✍️", name: String(localized: "Свой стиль"),
               prompt: description.isEmpty
-                ? Lang.pick("Перепиши в другом стиле.", "Rewrite it in a different style.")
-                : Lang.pick("Перепиши в таком стиле: ", "Rewrite it in this style: ") + description)
+                ? Shared.pack.style.customEmpty
+                : Shared.fill(Shared.pack.style.custom, ["description": description]))
     }
 }
 
@@ -64,10 +88,12 @@ final class StyleStore: ObservableObject {
     @discardableResult
     func add(_ style: Style? = nil) -> Style {
         let s = style ?? Style(id: UUID().uuidString, emoji: "✨", name: String(localized: "Новый стиль"),
-                               prompt: Lang.pick("Перепиши так, чтобы…", "Rewrite it so that…"))
+                               prompt: Self.newStylePrompt)
         styles.append(s)
         return s
     }
+
+    static var newStylePrompt: String { Shared.pack.style.newStyle }
 
     func delete(id: String) { styles.removeAll { $0.id == id } }
 
@@ -78,12 +104,12 @@ final class StyleStore: ObservableObject {
         styles.swapAt(i, j)
     }
 
-    func isBuiltin(_ id: String) -> Bool { (Self.defaultsRu + Self.defaultsEn).contains { $0.id == id } }
+    func isBuiltin(_ id: String) -> Bool { Self.allDefaults.contains { $0.id == id } }
 
     /// Стандартный стиль не «изменён», если совпадает с исходником на любом из языков
     /// (стили, созданные при русском интерфейсе, остаются русскими после смены языка).
     func isModified(_ style: Style) -> Bool {
-        let originals = (Self.defaultsRu + Self.defaultsEn).filter { $0.id == style.id }
+        let originals = Self.allDefaults.filter { $0.id == style.id }
         guard !originals.isEmpty else { return false }
         return !originals.contains { d in
             d.emoji == style.emoji && d.name == style.name && d.prompt == style.prompt
@@ -104,79 +130,11 @@ final class StyleStore: ObservableObject {
         styles = Self.defaults + custom
     }
 
-    // MARK: стандартный набор (на языке интерфейса)
+    // MARK: стандартный набор (shared/styles.json, на языке интерфейса)
 
-    static var defaults: [Style] { Lang.isEnglish ? defaultsEn : defaultsRu }
+    static var defaults: [Style] { Shared.styles.locales[Lang.code] ?? Shared.styles.locales["en"] ?? [] }
 
-    static let defaultsRu: [Style] = [
-        Style(id: "no-fillers", emoji: "🧹", name: "Без паразитов", prompt: """
-            Исправь орфографию, пунктуацию и грамматику, расставь заглавные буквы, раздели текст на предложения.
-            Убери слова-паразиты и речевые тики: «короче», «типа», «как бы», «ну», «вот», «это самое», «в общем», \
-            «значит», «так сказать», «чисто», «по факту», «реально», «просто» и «вообще», если они ничего не значат, \
-            повторы вроде «да да да» и лишние «а» в начале фразы. После удаления поправь фразу, чтобы она звучала естественно.
-            Сохрани смысл, факты, эмоции и разговорный тон — не делай текст официальным. Слова, которые несут смысл, \
-            оставь («это просто» в значении «легко»). Мат, эмодзи и «))» — это тон, а не паразиты: оставь их.
-            """, examples: [
-                .init(input: "ну короче я типа вчера как бы зашёл к ним а там вот это самое никого нет прикинь",
-                      output: "Я вчера зашёл к ним, а там никого нет, прикинь."),
-                .init(input: "слушай ну в общем значит такая ситуация я чисто по факту не успеваю к пятнице реально нужна ещё неделя",
-                      output: "Слушай, такая ситуация: я не успеваю к пятнице, нужна ещё неделя."),
-                .init(input: "да да да короче поняла всё сделаю просто это не так просто как кажется))",
-                      output: "Да, поняла, всё сделаю. Это не так просто, как кажется))"),
-            ]),
-        Style(id: "formal", emoji: "🎩", name: "Официальный",
-              prompt: "Перепиши в официальном, нейтрально-формальном стиле, как в письме незнакомому человеку."),
-        Style(id: "short", emoji: "✂️", name: "Краткий",
-              prompt: "Перепиши максимально кратко: убери воду, повторы и вводные слова, оставь только суть, но в тоне автора."),
-        Style(id: "friendly", emoji: "😊", name: "Дружеский",
-              prompt: "Перепиши в тёплом, дружеском, разговорном стиле, как пишут близкому другу."),
-        Style(id: "polite", emoji: "🌷", name: "Вежливый",
-              prompt: "Перепиши вежливее и мягче: без грубостей и резкости, но не подобострастно."),
-        Style(id: "corp", emoji: "💼", name: "Корпоративный",
-              prompt: "Перепиши густым корпоративным языком айти-офиса: «коллеги», «синкануться», «зафиналить», «апдейт», «таска», «дедлайн», «на нашей стороне», «по итогам», «эскалировать», «в моменте»."),
-        Style(id: "tribal", emoji: "🪶", name: "Племенной",
-              prompt: "Перепиши так, как говорит вождь древнего племени: простые короткие фразы, образы природы, духов предков, огня и охоты."),
-        Style(id: "zen", emoji: "🧘", name: "Дзен",
-              prompt: "Перепиши в стиле дзен-мастера: спокойно, отстранённо, коротко, с лёгкой мудростью и метафорами природы."),
-        Style(id: "biblical", emoji: "📜", name: "Библейский",
-              prompt: "Перепиши в библейском стиле: торжественно, архаично, «и было так», «ибо», «воистину», как в Синодальном переводе."),
-        Style(id: "viking", emoji: "🪓", name: "Викинг",
-              prompt: "Перепиши как суровый викинг из саги: громко, воинственно, с упоминанием Одина, Вальхаллы, драккаров и топоров."),
-    ]
-
-    static let defaultsEn: [Style] = [
-        Style(id: "no-fillers", emoji: "🧹", name: "No Fillers", prompt: """
-            Fix spelling, punctuation and grammar, capitalize properly, split the text into sentences.
-            Remove filler words and verbal tics: "like", "um", "uh", "you know", "I mean", "basically", "literally", \
-            "actually", "kind of", "sort of", "just", "so" and "well" when they carry no meaning, repeats like \
-            "yeah yeah yeah" and a stray "so" or "and" at the start. After removing them, smooth the phrase so it reads naturally.
-            Keep the meaning, facts, emotion and casual tone — don't make it formal. Keep words that carry meaning \
-            ("it's just two minutes away"). Swearing, emoji and ":)" are tone, not fillers: keep them.
-            """, examples: [
-                .init(input: "so like i basically went over there yesterday and um you know nobody was home lol",
-                      output: "I went over there yesterday and nobody was home lol"),
-                .init(input: "ok so i mean the thing is i literally can't finish by friday i kind of need another week",
-                      output: "Ok, the thing is, I can't finish by Friday. I need another week."),
-                .init(input: "yeah yeah yeah got it i'll do it it's just not as easy as it looks :)",
-                      output: "Yeah, got it, I'll do it. It's just not as easy as it looks :)"),
-            ]),
-        Style(id: "formal", emoji: "🎩", name: "Formal",
-              prompt: "Rewrite it in a formal, neutral style, as in a letter to a stranger."),
-        Style(id: "short", emoji: "✂️", name: "Short",
-              prompt: "Rewrite it as briefly as possible: drop fluff, repeats and filler, keep only the point, in the author's tone."),
-        Style(id: "friendly", emoji: "😊", name: "Friendly",
-              prompt: "Rewrite it in a warm, friendly, casual style, the way you'd text a close friend."),
-        Style(id: "polite", emoji: "🌷", name: "Polite",
-              prompt: "Rewrite it more politely and softly: no rudeness or harshness, but not servile."),
-        Style(id: "corp", emoji: "💼", name: "Corporate",
-              prompt: "Rewrite it in thick corporate office speak: \"circle back\", \"sync up\", \"action items\", \"bandwidth\", \"deliverables\", \"touch base\", \"leverage\", \"going forward\", \"per my last email\"."),
-        Style(id: "tribal", emoji: "🪶", name: "Tribal",
-              prompt: "Rewrite it the way an ancient tribal chief speaks: short simple phrases, images of nature, ancestor spirits, fire and the hunt."),
-        Style(id: "zen", emoji: "🧘", name: "Zen",
-              prompt: "Rewrite it like a zen master: calm, detached, brief, with gentle wisdom and nature metaphors."),
-        Style(id: "biblical", emoji: "📜", name: "Biblical",
-              prompt: "Rewrite it in a biblical style: solemn and archaic — \"and it came to pass\", \"for\", \"verily\", \"thou\", like the King James Bible."),
-        Style(id: "viking", emoji: "🪓", name: "Viking",
-              prompt: "Rewrite it like a fierce viking from a saga: loud and warlike, with Odin, Valhalla, longships and axes."),
-    ]
+    /// Стандартные стили на всех языках: стиль, созданный при русском интерфейсе,
+    /// остаётся «стандартным» и после переключения на английский.
+    static var allDefaults: [Style] { Shared.styles.locales.values.flatMap { $0 } }
 }

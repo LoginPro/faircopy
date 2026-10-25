@@ -274,69 +274,16 @@ final class VoiceStyleBuilder: ObservableObject {
     }
 
     /// Без этого модель превращает стиль в пародию: вставляет все любимые словечки разом и дописывает мысли.
-    static var moderation: String { Lang.pick(moderationRu, moderationEn) }
+    static var moderation: String { Shared.pack.voice.moderation.value }
 
-    private static let moderationEn = """
-    Apply these traits naturally and in moderation, the way the person would: don't stuff favorite words, swearing \
-    and slang into every phrase, don't add thoughts, opinions or phrases that aren't in the original. \
-    Keep the length close to the original. Quoted words above are only examples of the manner: use them only \
-    when they truly fit the meaning and grammar, otherwise pick your own words in the same spirit. \
-    Take the speaker's person and grammatical forms from the original text, not from the examples.
-    """
-
-    private static let moderationRu = """
-    Применяй эти черты естественно и умеренно, как сам человек: не вставляй любимые слова, мат и сленг в каждую фразу, \
-    не добавляй мыслей, оценок и фраз, которых нет в исходном тексте. Длина результата — примерно как у исходного. \
-    Слова и выражения в кавычках выше — лишь примеры манеры: используй их, только если они точно подходят \
-    по смыслу и грамматике, иначе подбирай свои слова в том же духе. \
-    Грамматический род и лицо говорящего бери из исходного текста («я уверен» остаётся мужским родом, \
-    «я устала» — женским), а не из примеров.
-    """
-
-    private static func analysisMessages(_ sample: [String]) -> [ChatMessage] {
-        let sys = Lang.isEnglish ? """
-        You are a linguist. You get messages written by one person, one per line. Describe their writing manner \
-        as an instruction for an editor who must rewrite any text the way this person would write it. \
-        Give 8–12 concrete points: favorite words, connectors and expressions; slang, abbreviations and swearing; \
-        how they address the other person; tone and pace; how they build phrases. \
-        Quote (in double quotes) only words and expressions that appear in several messages, and explain \
-        what the person means by them (e.g. "crashed" — fell asleep suddenly). Don't quote one-off phrases. \
-        Start the answer with "Rewrite it the way this person would write it:" and then list the points with "- ", \
-        each point one or two complete sentences, no markdown. Don't retell the content of the messages \
-        and don't mention names from them. Say nothing about capitalization, periods, emoticons, emoji or length — \
-        that is already measured precisely; focus on words, expressions, tone and phrasing.
-        """ : """
-        Ты — лингвист. Тебе дают сообщения одного человека из его переписки, по одному на строку. \
-        Опиши его манеру письма как инструкцию для редактора, который должен переписать любой текст так, \
-        как написал бы этот человек. Укажи 8–12 конкретных пунктов: длина фраз; заглавные буквы; пунктуация \
-        (ставит ли точки в конце, запятые, «))», многоточия); любимые слова, связки и выражения; \
-        сленг, сокращения и мат; эмодзи; как обращается к собеседнику; тон и темп. \
-        Приводи в кавычках только словечки и обороты, которые встречаются в нескольких сообщениях, и поясняй, \
-        в каком значении человек их использует (например: «срубило» — внезапно уснул). \
-        Не цитируй уникальные фразы из одного сообщения. \
-        Начни ответ с фразы «Перепиши так, как написал бы этот человек:» и дальше дай пункты списком через «- », \
-        каждый пункт — одно-два законченных предложения, без markdown-разметки. \
-        Не пересказывай содержание сообщений и не упоминай имена из них. \
-        Про заглавные буквы, точки, скобки, эмодзи и длину ничего не пиши — это уже посчитано точно, \
-        сосредоточься на словах, оборотах, тоне и построении фраз.
-        """
-        return [.init(role: "system", content: sys),
-                .init(role: "user", content: sample.joined(separator: "\n"))]
+    static func analysisMessages(_ sample: [String]) -> [ChatMessage] {
+        [.init(role: "system", content: Shared.pack.voice.analysis.value),
+         .init(role: "user", content: sample.joined(separator: "\n"))]
     }
 
-    private static func neutralizeMessages(_ text: String) -> [ChatMessage] {
-        let sys = Lang.isEnglish ? """
-        Rephrase the text inside <text>…</text> tags in neutral, correct language: no slang, swearing, emoji, \
-        abbreviations or pet words, with normal punctuation and capitalization. Keep the same person and addressee \
-        ("I" and "you" stay), don't retell it in the third person and don't write the word "author". \
-        Keep the meaning and facts, add nothing. Never reply to the text. Output only the rephrased text.
-        """ : """
-        Перефразируй текст из тегов <text>…</text> нейтральным грамотным языком: без сленга, мата, эмодзи, \
-        сокращений и характерных словечек, с обычной пунктуацией и заглавными буквами. Говори от того же лица \
-        и тому же адресату («я», «ты» остаются), не пересказывай в третьем лице и не пиши слово «автор». \
-        Смысл и факты сохрани, ничего не добавляй. Не отвечай на текст. Выведи только перефразированный текст.
-        """
-        return [.init(role: "system", content: sys), .init(role: "user", content: "<text>\(text)</text>")]
+    static func neutralizeMessages(_ text: String) -> [ChatMessage] {
+        [.init(role: "system", content: Shared.pack.voice.neutralize.value),
+         .init(role: "user", content: Shared.fill(Shared.prompts.input, ["text": text]))]
     }
 }
 
@@ -362,25 +309,18 @@ struct VoiceStats {
     }
 
     /// Частота → понятное правило для модели.
-    private func rule(_ p: Int, often: String, sometimes: String, rarely: String) -> String {
-        p >= 70 ? often : p >= 25 ? sometimes : rarely
+    private func rule(_ p: Int, _ tiers: PromptPack.Tiers) -> String {
+        p >= 70 ? tiers.often : p >= 25 ? tiers.sometimes : tiers.rarely
     }
 
     var rules: String {
-        Lang.isEnglish ? """
-        Exact habits (measured over \(count) messages):
-        - \(rule(upperStart, often: "start messages with a capital letter", sometimes: "capitalize the first letter about half the time", rarely: "start messages in lowercase")) (capitalized in \(upperStart)% of messages);
-        - \(rule(periodEnd, often: "end messages with a period", sometimes: "end with a period only sometimes", rarely: "don't put a period at the end")) (period in \(periodEnd)%);
-        - smiley ")" in \(bracket)% of messages, "))" in \(doubleBracket)%;
-        - emoji in \(emoji)% of messages, ellipsis in \(ellipsis)%;
-        - a typical message is about \(medianWords) words long.
-        """ : """
-        Точные привычки (посчитано по \(count) сообщениям):
-        - \(rule(upperStart, often: "начинай сообщение с заглавной буквы", sometimes: "заглавная в начале — примерно через раз", rarely: "начинай со строчной буквы")) (заглавная в \(upperStart)% сообщений);
-        - \(rule(periodEnd, often: "ставь точку в конце", sometimes: "точку в конце ставь не всегда", rarely: "точку в конце сообщения не ставь")) (точка в \(periodEnd)%);
-        - скобка-улыбка «)» — в \(bracket)% сообщений, «))» — в \(doubleBracket)%;
-        - эмодзи — в \(emoji)% сообщений, многоточие — в \(ellipsis)%;
-        - обычная длина сообщения — около \(medianWords) слов.
-        """
+        let v = Shared.pack.voice
+        return Shared.fill(v.stats.value, [
+            "count": "\(count)",
+            "capitalRule": rule(upperStart, v.capitalRule), "capitalStart": "\(upperStart)",
+            "periodRule": rule(periodEnd, v.periodRule), "periodEnd": "\(periodEnd)",
+            "bracket": "\(bracket)", "doubleBracket": "\(doubleBracket)",
+            "emoji": "\(emoji)", "ellipsis": "\(ellipsis)", "medianWords": "\(medianWords)",
+        ])
     }
 }

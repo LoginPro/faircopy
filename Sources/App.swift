@@ -424,6 +424,7 @@ enum CLI {
             case "--explain": explain = true
             case "--warm", "--cool", "--model-state": modelCommand(a)
             case "--voice": runVoice(path: args.removeFirst(), test: args.joined(separator: " "))
+            case "--dump-prompts": PromptDump.run()
             default: break
             }
         }

@@ -20,6 +20,8 @@ cp Resources/Info.plist "$APP/Contents/Info.plist"
 mkdir -p "$APP/Contents/Resources"
 cp Resources/AppIcon.icns Resources/MenuBarIcon.png Resources/MenuBarIcon@2x.png "$APP/Contents/Resources/"
 cp -R Resources/en.lproj Resources/ru.lproj "$APP/Contents/Resources/"
+# промпты и стандартные стили — общие с Windows-версией
+cp shared/prompts.json shared/styles.json "$APP/Contents/Resources/"
 # Постоянный самоподписанный сертификат: требование подписи (designated requirement)
 # не меняется между сборками, и macOS не сбрасывает «Универсальный доступ».
 # Если сертификата нет (другой Mac) — ad-hoc подпись, доступ придётся выдавать после каждой сборки.
