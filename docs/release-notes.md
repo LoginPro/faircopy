@@ -8,6 +8,11 @@
   <img src="https://raw.githubusercontent.com/LoginPro/faircopy-mac/main/docs/editor.png" width="460" alt="FairCopy editor">
 </p>
 
+### 🛠 What's new in 1.0.1
+
+- **Fixed empty results with reasoning models.** Some models (e.g. Gemma 4 26B-A4B) ignored the "don't think" switch and spent the whole answer on hidden reasoning, so the editor came back empty. FairCopy now also sends `reasoning_effort: none` — with Gemma 4 26B-A4B a fix takes ~2 s instead of ~15 s.
+- If a model still answers with reasoning only, FairCopy shows a clear error instead of an empty window.
+
 ### ✨ What's inside
 
 - **Fix** — spelling, punctuation, run-on sentences. Never makes your text formal.
@@ -20,7 +25,7 @@
 
 ### 📦 Install
 
-1. Download **FairCopy-1.0.0.dmg** below, open it and drag **FairCopy** to **Applications**.
+1. Download the **.dmg** below, open it and drag **FairCopy** to **Applications**.
 2. **First launch.** FairCopy isn't notarized by Apple, so macOS will block it once. Open it, then go to **System Settings → Privacy & Security** and click **Open Anyway**.
 3. **Accessibility.** Enable FairCopy in **System Settings → Privacy & Security → Accessibility** — it reads the selected text and pastes the result back.
 4. **Model.** Install [LM Studio](https://lmstudio.ai) and download a model — Gemma 4 12B is the default:
