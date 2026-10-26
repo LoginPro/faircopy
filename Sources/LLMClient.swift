@@ -9,6 +9,7 @@ enum LLMError: LocalizedError {
     case serverUnavailable
     case unauthorized
     case noModel
+    case onlyReasoning
     case http(Int, String)
 
     var errorDescription: String? {
@@ -16,6 +17,7 @@ enum LLMError: LocalizedError {
         case .serverUnavailable: String(localized: "Сервер модели не отвечает (LM Studio, 127.0.0.1:1234)")
         case .unauthorized: String(localized: "LM Studio требует API-токен: меню редактора → «Токен LM Studio…»")
         case .noModel: String(localized: "Нет загруженных моделей в LM Studio")
+        case .onlyReasoning: String(localized: "Модель потратила весь ответ на рассуждения и не выдала текст. Выберите другую модель или отключите у неё «Thinking» в LM Studio.")
         case .http(let code, let body): "HTTP \(code): \(body.prefix(200))"
         }
     }
@@ -108,8 +110,10 @@ final class LLMClient: @unchecked Sendable {
             let stream: Bool
             let ttl: Int
             /// Gemma 4 / Qwen по умолчанию могут «думать» перед ответом — для правки текста это
-            /// только лишние секунды, поэтому выключаем рассуждения через шаблон чата.
+            /// только лишние секунды, поэтому выключаем рассуждения. Одни модели слушаются
+            /// переменной шаблона чата, другие (Gemma 4 26B-A4B) — только `reasoning_effort`.
             let chat_template_kwargs = ["enable_thinking": false]
+            let reasoning_effort = "none"
         }
         let inputChars = messages.last?.content.count ?? 0
         let body = Body(model: modelID, messages: messages, temperature: temperature,
@@ -130,21 +134,30 @@ final class LLMClient: @unchecked Sendable {
         }
 
         struct Chunk: Decodable {
-            struct Choice: Decodable { struct Delta: Decodable { let content: String? }; let delta: Delta }
+            struct Choice: Decodable {
+                struct Delta: Decodable { let content: String?; let reasoning_content: String? }
+                let delta: Delta
+            }
             let choices: [Choice]
         }
         var raw = ""
+        var reasoned = false
         for try await line in bytes.lines {
             try Task.checkCancellation()
             guard line.hasPrefix("data: ") else { continue }
             let payload = line.dropFirst(6)
             if payload == "[DONE]" { break }
             guard let chunk = try? JSONDecoder().decode(Chunk.self, from: Data(payload.utf8)),
-                  let delta = chunk.choices.first?.delta.content else { continue }
+                  let d = chunk.choices.first?.delta else { continue }
+            if d.reasoning_content?.isEmpty == false { reasoned = true }
+            guard let delta = d.content else { continue }
             raw += delta
             onText(Prompts.clean(raw))
         }
-        return Prompts.clean(raw)
+        let result = Prompts.clean(raw)
+        // рассуждения съели весь лимит токенов — без этого окно просто осталось бы пустым
+        if result.isEmpty, reasoned, maxTokens != 1 { throw LLMError.onlyReasoning }
+        return result
     }
 }
 

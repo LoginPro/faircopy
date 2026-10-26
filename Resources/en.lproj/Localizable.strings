@@ -157,3 +157,5 @@
 "Изучаю манеру письма по %lld сообщениям…" = "Studying the writing manner from %lld messages…";
 "Уточняю описание манеры…" = "Refining the description…";
 "Готовлю примеры речи: %lld из %lld…" = "Preparing voice examples: %lld of %lld…";
+
+"Модель потратила весь ответ на рассуждения и не выдала текст. Выберите другую модель или отключите у неё «Thinking» в LM Studio." = "The model spent the whole answer on reasoning and returned no text. Pick another model or turn off its “Thinking” in LM Studio.";
