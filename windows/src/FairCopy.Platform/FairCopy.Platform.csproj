@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Всё, что зависит от Windows, но не от интерфейса: хоткеи, трей, буфер обмена, ввод, UI Automation.
+       EnableWindowsTargeting — чтобы проверять компиляцию и на Mac. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>FairCopy.Platform</RootNamespace>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Interop.UIAutomationClient" Version="10.19041.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FairCopy.Core\FairCopy.Core.csproj" />
+  </ItemGroup>
+
+</Project>
