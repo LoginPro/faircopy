@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Логика без интерфейса: промпты, стили, «Мой стиль», дифф, клиент модели.
+       Собирается и на macOS — так ядро можно проверять, не дожидаясь Windows-ПК. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>FairCopy</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\shared\prompts.json" LogicalName="prompts.json" />
+    <EmbeddedResource Include="..\..\shared\styles.json" LogicalName="styles.json" />
+  </ItemGroup>
+
+</Project>

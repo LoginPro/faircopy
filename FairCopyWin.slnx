@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/FairCopy.Core/FairCopy.Core.csproj" />
+    <Project Path="src/FairCopy.Cli/FairCopy.Cli.csproj" />
+  </Folder>
+</Solution>

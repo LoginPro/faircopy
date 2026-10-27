@@ -1,0 +1,165 @@
+{
+  "format": 1,
+  "locales": {
+    "ru": [
+      {
+        "id": "no-fillers",
+        "emoji": "🧹",
+        "name": "Без паразитов",
+        "prompt": [
+          "Исправь орфографию, пунктуацию и грамматику, расставь заглавные буквы, раздели текст на предложения.",
+          "Убери слова-паразиты и речевые тики: «короче», «типа», «как бы», «ну», «вот», «это самое», «в общем», «значит», «так сказать», «чисто», «по факту», «реально», «просто» и «вообще», если они ничего не значат, повторы вроде «да да да» и лишние «а» в начале фразы. После удаления поправь фразу, чтобы она звучала естественно.",
+          "Сохрани смысл, факты, эмоции и разговорный тон — не делай текст официальным. Слова, которые несут смысл, оставь («это просто» в значении «легко»). Мат, эмодзи и «))» — это тон, а не паразиты: оставь их."
+        ],
+        "examples": [
+          {
+            "input": "ну короче я типа вчера как бы зашёл к ним а там вот это самое никого нет прикинь",
+            "output": "Я вчера зашёл к ним, а там никого нет, прикинь."
+          },
+          {
+            "input": "слушай ну в общем значит такая ситуация я чисто по факту не успеваю к пятнице реально нужна ещё неделя",
+            "output": "Слушай, такая ситуация: я не успеваю к пятнице, нужна ещё неделя."
+          },
+          {
+            "output": "Да, поняла, всё сделаю. Это не так просто, как кажется))",
+            "input": "да да да короче поняла всё сделаю просто это не так просто как кажется))"
+          }
+        ]
+      },
+      {
+        "id": "formal",
+        "emoji": "🎩",
+        "name": "Официальный",
+        "prompt": "Перепиши в официальном, нейтрально-формальном стиле, как в письме незнакомому человеку."
+      },
+      {
+        "id": "short",
+        "emoji": "✂️",
+        "name": "Краткий",
+        "prompt": "Перепиши максимально кратко: убери воду, повторы и вводные слова, оставь только суть, но в тоне автора."
+      },
+      {
+        "id": "friendly",
+        "emoji": "😊",
+        "name": "Дружеский",
+        "prompt": "Перепиши в тёплом, дружеском, разговорном стиле, как пишут близкому другу."
+      },
+      {
+        "id": "polite",
+        "emoji": "🌷",
+        "name": "Вежливый",
+        "prompt": "Перепиши вежливее и мягче: без грубостей и резкости, но не подобострастно."
+      },
+      {
+        "id": "corp",
+        "emoji": "💼",
+        "name": "Корпоративный",
+        "prompt": "Перепиши густым корпоративным языком айти-офиса: «коллеги», «синкануться», «зафиналить», «апдейт», «таска», «дедлайн», «на нашей стороне», «по итогам», «эскалировать», «в моменте»."
+      },
+      {
+        "id": "tribal",
+        "emoji": "🪶",
+        "name": "Племенной",
+        "prompt": "Перепиши так, как говорит вождь древнего племени: простые короткие фразы, образы природы, духов предков, огня и охоты."
+      },
+      {
+        "id": "zen",
+        "emoji": "🧘",
+        "name": "Дзен",
+        "prompt": "Перепиши в стиле дзен-мастера: спокойно, отстранённо, коротко, с лёгкой мудростью и метафорами природы."
+      },
+      {
+        "id": "biblical",
+        "emoji": "📜",
+        "name": "Библейский",
+        "prompt": "Перепиши в библейском стиле: торжественно, архаично, «и было так», «ибо», «воистину», как в Синодальном переводе."
+      },
+      {
+        "id": "viking",
+        "emoji": "🪓",
+        "name": "Викинг",
+        "prompt": "Перепиши как суровый викинг из саги: громко, воинственно, с упоминанием Одина, Вальхаллы, драккаров и топоров."
+      }
+    ],
+    "en": [
+      {
+        "id": "no-fillers",
+        "emoji": "🧹",
+        "name": "No Fillers",
+        "prompt": [
+          "Fix spelling, punctuation and grammar, capitalize properly, split the text into sentences.",
+          "Remove filler words and verbal tics: \"like\", \"um\", \"uh\", \"you know\", \"I mean\", \"basically\", \"literally\", \"actually\", \"kind of\", \"sort of\", \"just\", \"so\" and \"well\" when they carry no meaning, repeats like \"yeah yeah yeah\" and a stray \"so\" or \"and\" at the start. After removing them, smooth the phrase so it reads naturally.",
+          "Keep the meaning, facts, emotion and casual tone — don't make it formal. Keep words that carry meaning (\"it's just two minutes away\"). Swearing, emoji and \":)\" are tone, not fillers: keep them."
+        ],
+        "examples": [
+          {
+            "input": "so like i basically went over there yesterday and um you know nobody was home lol",
+            "output": "I went over there yesterday and nobody was home lol"
+          },
+          {
+            "output": "Ok, the thing is, I can't finish by Friday. I need another week.",
+            "input": "ok so i mean the thing is i literally can't finish by friday i kind of need another week"
+          },
+          {
+            "output": "Yeah, got it, I'll do it. It's just not as easy as it looks :)",
+            "input": "yeah yeah yeah got it i'll do it it's just not as easy as it looks :)"
+          }
+        ]
+      },
+      {
+        "id": "formal",
+        "emoji": "🎩",
+        "name": "Formal",
+        "prompt": "Rewrite it in a formal, neutral style, as in a letter to a stranger."
+      },
+      {
+        "id": "short",
+        "emoji": "✂️",
+        "name": "Short",
+        "prompt": "Rewrite it as briefly as possible: drop fluff, repeats and filler, keep only the point, in the author's tone."
+      },
+      {
+        "id": "friendly",
+        "emoji": "😊",
+        "name": "Friendly",
+        "prompt": "Rewrite it in a warm, friendly, casual style, the way you'd text a close friend."
+      },
+      {
+        "id": "polite",
+        "emoji": "🌷",
+        "name": "Polite",
+        "prompt": "Rewrite it more politely and softly: no rudeness or harshness, but not servile."
+      },
+      {
+        "id": "corp",
+        "emoji": "💼",
+        "name": "Corporate",
+        "prompt": "Rewrite it in thick corporate office speak: \"circle back\", \"sync up\", \"action items\", \"bandwidth\", \"deliverables\", \"touch base\", \"leverage\", \"going forward\", \"per my last email\"."
+      },
+      {
+        "id": "tribal",
+        "emoji": "🪶",
+        "name": "Tribal",
+        "prompt": "Rewrite it the way an ancient tribal chief speaks: short simple phrases, images of nature, ancestor spirits, fire and the hunt."
+      },
+      {
+        "id": "zen",
+        "emoji": "🧘",
+        "name": "Zen",
+        "prompt": "Rewrite it like a zen master: calm, detached, brief, with gentle wisdom and nature metaphors."
+      },
+      {
+        "id": "biblical",
+        "emoji": "📜",
+        "name": "Biblical",
+        "prompt": "Rewrite it in a biblical style: solemn and archaic — \"and it came to pass\", \"for\", \"verily\", \"thou\", like the King James Bible."
+      },
+      {
+        "id": "viking",
+        "emoji": "🪓",
+        "name": "Viking",
+        "prompt": "Rewrite it like a fierce viking from a saga: loud and warlike, with Odin, Valhalla, longships and axes."
+      }
+    ]
+  }
+}
