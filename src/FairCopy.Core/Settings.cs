@@ -44,6 +44,9 @@ public sealed class AppSettings
     public bool ExplainEdits { get; set; } = true;
     public bool Prewarm { get; set; } = true;
     public int Ttl { get; set; } = 3600;
+    /// Последнее описание «Своего стиля» и язык перевода в окне редактора.
+    public string CustomStyle { get; set; } = "";
+    public string Language { get; set; } = "English";
     public HotKeySpec EditorHotKey { get; set; } = HotKeySpec.EditorDefault;
     public HotKeySpec QuickHotKey { get; set; } = HotKeySpec.QuickDefault;
 

@@ -14,6 +14,9 @@ sealed class Controller(App app)
     HotKeys hotKeys = null!;
     TrayIcon tray = null!;
     ForegroundTracker foreground = null!;
+    readonly EditorModel editorModel = new();
+    EditorWindow? editor;
+    TextTarget? editorTarget;
     bool working;
 
     public void Start()
@@ -31,6 +34,38 @@ sealed class Controller(App app)
         window.OnResume(PrewarmIfEnabled);
 
         _ = StartupAsync();
+
+        // `--panel [fix|style|translate]` — открыть редактор сразу на тестовом тексте, без хоткея и чужих
+        // программ (для проверки интерфейса и скриншотов; «Применить» только закрывает окно)
+        var args = Environment.GetCommandLineArgs();
+        int i = Array.IndexOf(args, "--panel");
+        if (i >= 0) ShowTestPanel(i + 1 < args.Length ? args[i + 1] : null);
+    }
+
+    void ShowTestPanel(string? mode)
+    {
+        Log.Write("тестовое окно редактора: " + (mode ?? "fix"));
+        try { ShowTestPanelCore(mode); }
+        catch (Exception e) { Log.Write("тестовое окно редактора: " + e); }
+    }
+
+    void ShowTestPanelCore(string? mode)
+    {
+        EnsureEditor();
+        editorTarget = null;
+        editorModel.Start(T("короче я щас не смогу прийти потомучто машина сломалась может завтра норм будет",
+                            "hey so I was thinking maybe we could grab lunch tmrw if your free lol let me know"), null);
+        editorModel.Mode = mode switch { "style" => EditMode.Style, "translate" => EditMode.Translate, _ => EditMode.Fix };
+        var (x, y) = TextBridge.CursorPosition();
+        editor!.ShowAt((x, y, 0, 0));
+    }
+
+    void EnsureEditor()
+    {
+        if (editor is not null) return;
+        editor = new EditorWindow(editorModel);
+        editor.Applied += ApplyEditor;
+        editor.Dismissed += CloseEditor;
     }
 
     async Task StartupAsync()
@@ -173,11 +208,53 @@ sealed class Controller(App app)
 
     // действия
 
-    /// Окно редактора — этап 3; пока сообщаем, что есть быстрая замена.
-    void OpenEditor(TextTarget? fromMenu)
+    /// Окно редактора для выделенного (или всего поля) текста.
+    /// fromMenu — окно, активное до щелчка по значку; с хоткея — текущее активное окно.
+    async void OpenEditor(TextTarget? fromMenu)
     {
-        tray.Notify("FairCopy", T($"Окно редактора появится в следующей версии. Пока работает «Исправить сразу» — {Display(settings.QuickHotKey)}.",
-                                  $"The editor window is coming in the next version. For now use Fix Instantly — {Display(settings.QuickHotKey)}."));
+        if (editor?.IsShown == true && fromMenu is null && TextBridge.Foreground() is null) return; // хоткей в самом окне
+        if (working) { Keyboard.Beep(); return; }
+        working = true;
+        try
+        {
+            if (fromMenu is not null) TextBridge.Activate(fromMenu);
+            var target = fromMenu ?? TextBridge.Foreground();
+            if (target is null) { Keyboard.Beep(); return; }
+            Log.Write($"редактор для {target.ExeName}");
+            // окно — у строки с текстом, а не у мыши: хоткей жмут с клавиатуры, мышь может быть где угодно
+            var place = await TextBridge.FocusedTextRect();
+            var text = await TextBridge.GrabText();
+            if (text is null) { Keyboard.Beep(); return; }
+            editorTarget = target;
+            EnsureEditor();
+            editorModel.Start(text, target.ExeName);
+            var (mx, my) = TextBridge.CursorPosition();
+            editor!.ShowAt(place ?? (mx, my, 0, 0));
+        }
+        catch (Exception e)
+        {
+            Log.Write("редактор: " + e);
+            tray.Notify("FairCopy", e.Message, error: true);
+        }
+        finally { working = false; }
+    }
+
+    async void ApplyEditor(string text)
+    {
+        editorModel.RememberForApp(editorTarget?.DisplayName);
+        editorModel.Cancel();
+        var target = editorTarget;
+        // сначала возвращаем фокус исходному окну (пока мы активны, Windows это разрешает), потом прячемся
+        if (target is not null) TextBridge.Activate(target);
+        editor?.HideWindow();
+        if (target is not null) await TextBridge.Paste(text, target);
+    }
+
+    void CloseEditor()
+    {
+        editorModel.Cancel();
+        if (editorTarget is not null) TextBridge.Activate(editorTarget);
+        editor?.HideWindow();
     }
 
     /// Исправить выделенное (или всё поле) и сразу вставить результат.
