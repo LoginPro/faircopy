@@ -4,3 +4,5 @@ obj/
 *.user
 .DS_Store
 artifacts/
+CLAUDE.md
+tools/pc.local
