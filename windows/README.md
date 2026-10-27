@@ -2,7 +2,7 @@
 
 **A private, offline AI editor for any text field on Windows.** Select text (or just put the cursor in a message box), press <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd> and get a clean copy — typos, punctuation and broken sentences fixed, while your casual tone, slang and emoji stay exactly as they were.
 
-This is the Windows port of [FairCopy for Mac](https://github.com/LoginPro/faircopy-mac). It runs entirely on your PC through [LM Studio](https://lmstudio.ai): no cloud, no account, your text never leaves the machine.
+This is the Windows port of [FairCopy for Mac](../README.md). It runs entirely on your PC through [LM Studio](https://lmstudio.ai): no cloud, no account, your text never leaves the machine.
 
 [Русская версия](README.ru.md)
 
@@ -23,7 +23,7 @@ This is the Windows port of [FairCopy for Mac](https://github.com/LoginPro/fairc
 - **Per-app memory** — the mode and style you applied in an app are used there next time.
 - Lives in the notification area: model warm-up / unload, model picker, start at login.
 - Your clipboard is restored after every grab and paste, and FairCopy's temporary text is kept out of clipboard history (<kbd>Win</kbd>+<kbd>V</kbd>).
-- English and Russian; prompts and built-in styles are shared with the Mac app (`shared/`) and checked byte for byte against it.
+- English and Russian; prompts and built-in styles are shared with the Mac app (`../shared/`) and checked byte for byte against it.
 
 ## Requirements
 
@@ -35,9 +35,9 @@ This is the Windows port of [FairCopy for Mac](https://github.com/LoginPro/fairc
 ## Build and run
 
 ```powershell
-git clone https://github.com/LoginPro/faircopy-windows.git
-cd faircopy-windows
-dotnet build FairCopyWin.slnx
+git clone https://github.com/LoginPro/faircopy.git
+cd faircopy\windows
+dotnet build FairCopy.slnx
 .\src\FairCopy.App\bin\Debug\net10.0-windows10.0.19041.0\win-x64\FairCopy.exe
 ```
 
@@ -60,9 +60,9 @@ Windows does not let a normal app send keystrokes to an app running as administr
 | `src/FairCopy.Platform` | Win32: hotkeys, tray icon, clipboard, `SendInput`, UI Automation, Credential Manager |
 | `src/FairCopy.App` | WinUI 3 app (unpackaged): tray controller and editor window |
 | `src/FairCopy.Cli` | `faircopy-cli --dump-prompts`, `models`, `fix …` — checks the core from a terminal |
-| `shared/` | prompts and built-in styles, copied from the Mac repo |
+| `../shared/` | prompts and built-in styles, shared with the Mac app |
 | `tests/reference/` | `--dump-prompts` output of the Mac app; the Windows output must match it byte for byte |
 
 ## License
 
-MIT
+MIT — see [LICENSE](../LICENSE).

@@ -2,7 +2,7 @@
 
 **Офлайн ИИ-редактор для любого поля ввода в Windows.** Выдели текст (или просто поставь курсор в поле сообщения), нажми <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd> — и получи чистовик: опечатки, пунктуация и корявые фразы исправлены, а разговорный тон, сленг и эмодзи остались на месте.
 
-Это порт [FairCopy для Mac](https://github.com/LoginPro/faircopy-mac). Всё работает на твоём компьютере через [LM Studio](https://lmstudio.ai): без облака и аккаунтов, текст никуда не уходит.
+Это порт [FairCopy для Mac](../README.ru.md). Всё работает на твоём компьютере через [LM Studio](https://lmstudio.ai): без облака и аккаунтов, текст никуда не уходит.
 
 [English version](README.md)
 
@@ -23,7 +23,7 @@
 - **Память по приложениям** — режим и стиль, применённые в приложении, открываются там в следующий раз.
 - Живёт в трее: прогрев и выгрузка модели, выбор модели, запуск при входе.
 - Буфер обмена возвращается после каждого захвата и вставки, а временный текст FairCopy не попадает в журнал буфера (<kbd>Win</kbd>+<kbd>V</kbd>).
-- Русский и английский; промпты и стандартные стили общие с Mac-версией (`shared/`) и сверяются с ней байт в байт.
+- Русский и английский; промпты и стандартные стили общие с Mac-версией (`../shared/`) и сверяются с ней байт в байт.
 
 ## Что нужно
 
@@ -35,9 +35,9 @@
 ## Сборка и запуск
 
 ```powershell
-git clone https://github.com/LoginPro/faircopy-windows.git
-cd faircopy-windows
-dotnet build FairCopyWin.slnx
+git clone https://github.com/LoginPro/faircopy.git
+cd faircopy\windows
+dotnet build FairCopy.slnx
 .\src\FairCopy.App\bin\Debug\net10.0-windows10.0.19041.0\win-x64\FairCopy.exe
 ```
 
@@ -60,9 +60,9 @@ Windows не даёт обычной программе слать нажати�
 | `src/FairCopy.Platform` | Win32: хоткеи, значок в трее, буфер обмена, `SendInput`, UI Automation, Диспетчер учётных данных |
 | `src/FairCopy.App` | приложение на WinUI 3 (без MSIX): трей и окно редактора |
 | `src/FairCopy.Cli` | `faircopy-cli --dump-prompts`, `models`, `fix …` — проверка ядра из терминала |
-| `shared/` | промпты и стандартные стили, копия из Mac-репозитория |
+| `../shared/` | промпты и стандартные стили, общие с Mac-версией |
 | `tests/reference/` | вывод `--dump-prompts` Mac-версии; вывод Windows-версии должен совпадать байт в байт |
 
 ## Лицензия
 
-MIT
+MIT — см. [LICENSE](../LICENSE).

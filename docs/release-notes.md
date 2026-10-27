@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/LoginPro/faircopy-mac/main/Branding/logo.png" width="360" alt="FairCopy">
+  <img src="https://raw.githubusercontent.com/LoginPro/faircopy/main/Branding/logo.png" width="360" alt="FairCopy">
 </p>
 
 **A private, offline AI editor for any text field on your Mac.** Select text, press <kbd>⌃⌥R</kbd>, get a clean copy — typos and punctuation fixed, your casual tone, slang and emoji untouched. Runs entirely on your Mac through LM Studio.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/LoginPro/faircopy-mac/main/docs/editor.png" width="460" alt="FairCopy editor">
+  <img src="https://raw.githubusercontent.com/LoginPro/faircopy/main/docs/editor.png" width="460" alt="FairCopy editor">
 </p>
 
 ### 🛠 What's new in 1.0.1
@@ -39,5 +39,5 @@
 macOS 26 or later · Apple Silicon · ~9 GB free memory for the model (16 GB RAM or more recommended)
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/LoginPro/faircopy-mac/main/docs/install.png" width="460" alt="Installer window">
+  <img src="https://raw.githubusercontent.com/LoginPro/faircopy/main/docs/install.png" width="460" alt="Installer window">
 </p>

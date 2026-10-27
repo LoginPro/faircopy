@@ -10,8 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="..\..\shared\prompts.json" LogicalName="prompts.json" />
-    <EmbeddedResource Include="..\..\shared\styles.json" LogicalName="styles.json" />
+    <EmbeddedResource Include="..\..\..\shared\prompts.json" LogicalName="prompts.json" />
+    <EmbeddedResource Include="..\..\..\shared\styles.json" LogicalName="styles.json" />
   </ItemGroup>
 
 </Project>

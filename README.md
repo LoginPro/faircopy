@@ -6,7 +6,7 @@
 
 *Fair copy* is the clean version you write out after a rough draft. FairCopy does that for every message — inspired by Telegram's AI Editor, but it works in any app and runs entirely on your Mac through [LM Studio](https://lmstudio.ai). No cloud, no account, your text never leaves the machine.
 
-[Русская версия](README.ru.md)
+[Русская версия](README.ru.md) · **Windows:** the port lives in [`windows/`](windows/README.md) (work in progress).
 
 <p align="center">
   <img src="docs/editor.png" width="520" alt="FairCopy editor: edits highlighted, explanation on hover">
@@ -40,9 +40,9 @@
 
 ## Download
 
-[![Download FairCopy](https://img.shields.io/github/v/release/LoginPro/faircopy-mac?label=Download&style=for-the-badge&color=22267A)](https://github.com/LoginPro/faircopy-mac/releases/latest)
+[![Download FairCopy](https://img.shields.io/github/v/release/LoginPro/faircopy?label=Download&style=for-the-badge&color=22267A)](https://github.com/LoginPro/faircopy/releases/latest)
 
-Grab the **.dmg** from the [latest release](https://github.com/LoginPro/faircopy-mac/releases/latest), open it and drag FairCopy to Applications. FairCopy isn't notarized, so on first launch macOS blocks it once: open **System Settings → Privacy & Security** and click **Open Anyway**. Then follow steps 1–2 below and get a model:
+Grab the **.dmg** from the [latest release](https://github.com/LoginPro/faircopy/releases/latest), open it and drag FairCopy to Applications. FairCopy isn't notarized, so on first launch macOS blocks it once: open **System Settings → Privacy & Security** and click **Open Anyway**. Then follow steps 1–2 below and get a model:
 
 ```bash
 ~/.lmstudio/bin/lms get https://huggingface.co/mlx-community/gemma-4-12B-it-qat-OptiQ-4bit
@@ -55,8 +55,8 @@ Grab the **.dmg** from the [latest release](https://github.com/LoginPro/faircopy
 ~/.lmstudio/bin/lms get https://huggingface.co/mlx-community/gemma-4-12B-it-qat-OptiQ-4bit
 
 # 2. Build and install FairCopy to ~/Applications
-git clone https://github.com/LoginPro/faircopy-mac.git
-cd faircopy-mac
+git clone https://github.com/LoginPro/faircopy.git
+cd faircopy
 ./build.sh install
 ```
 

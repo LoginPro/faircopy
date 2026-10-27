@@ -1,6 +1,6 @@
 #!/bin/zsh
-# Сборка и запуск на домашнем ПК. Главная копия файлов — на Mac (~/Projects/FairCopyWin),
-# на ПК (I:\FairCopyWin) — только зеркало для сборки: правки там затираются следующим sync.
+# Сборка и запуск на домашнем ПК. Главная копия файлов — на Mac (~/Projects/FairCopy/windows),
+# на ПК (I:\FairCopy: windows\ и общий shared\) — только зеркало для сборки: правки там затираются следующим sync.
 #
 #   tools/pc.sh sync               — залить исходники на ПК
 #   tools/pc.sh build              — sync + dotnet build всего решения
@@ -14,7 +14,8 @@
 #   tools/pc.sh sh '<команда cmd>' — произвольная команда на ПК в папке проекта
 set -e
 cd "${0:A:h}/.."
-PC_DIR='I:\FairCopyWin'
+PC_ROOT='I:\FairCopy'
+PC_DIR='I:\FairCopy\windows'
 # адрес ПК и ключ ssh — в tools/pc.local (не в git): PC_HOST=user@host, PC_KEY=~/.ssh/key
 [[ -f tools/pc.local ]] && source tools/pc.local
 : ${PC_HOST:?"задай PC_HOST (и PC_KEY) в tools/pc.local"}
@@ -25,13 +26,14 @@ pcput() { scp -q -i $PC_KEY "$1" "$PC_HOST:$2"; }
 
 sync() {
   # tar есть и в Windows (bsdtar); bin/obj не трогаем, чтобы сборка оставалась инкрементальной
-  COPYFILE_DISABLE=1 tar czf - --exclude bin --exclude obj --exclude .git --exclude .DS_Store \
-    --exclude artifacts . | pc "(if not exist $PC_DIR mkdir $PC_DIR) & tar xzf - -C $PC_DIR"
+  # из корня репозитория: Windows-версия и общие с Mac промпты и стили (shared/)
+  (cd .. && COPYFILE_DISABLE=1 tar czf - --exclude bin --exclude obj --exclude .DS_Store --exclude CLAUDE.md \
+    --exclude pc.local windows shared) | pc "(if not exist $PC_ROOT mkdir $PC_ROOT) & tar xzf - -C $PC_ROOT"
 }
 
 build() {
   sync
-  pc "cd /d $PC_DIR && dotnet build FairCopyWin.slnx -nologo -v q -clp:NoSummary;ErrorsOnly"
+  pc "cd /d $PC_DIR && dotnet build FairCopy.slnx -nologo -v q -clp:NoSummary;ErrorsOnly"
 }
 
 app_exe="$PC_DIR\\src\\FairCopy.App\\bin\\Debug\\net10.0-windows10.0.19041.0\\win-x64\\FairCopy.exe"
